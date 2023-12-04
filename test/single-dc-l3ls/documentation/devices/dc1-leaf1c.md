@@ -4,8 +4,6 @@
 
 - [Management](#management)
   - [Management Interfaces](#management-interfaces)
-  - [IP Name Servers](#ip-name-servers)
-  - [NTP](#ntp)
   - [Management API HTTP](#management-api-http)
 - [Authentication](#authentication)
   - [Local Users](#local-users)
@@ -61,44 +59,6 @@ interface Management1
    no shutdown
    vrf MGMT
    ip address 172.16.1.151/24
-```
-
-### IP Name Servers
-
-#### IP Name Servers Summary
-
-| Name Server | VRF | Priority |
-| ----------- | --- | -------- |
-| 192.168.1.1 | MGMT | - |
-
-#### IP Name Servers Device Configuration
-
-```eos
-ip name-server vrf MGMT 192.168.1.1
-```
-
-### NTP
-
-#### NTP Summary
-
-##### NTP Local Interface
-
-| Interface | VRF |
-| --------- | --- |
-| Management1 | MGMT |
-
-##### NTP Servers
-
-| Server | VRF | Preferred | Burst | iBurst | Version | Min Poll | Max Poll | Local-interface | Key |
-| ------ | --- | --------- | ----- | ------ | ------- | -------- | -------- | --------------- | --- |
-| 0.pool.ntp.org | MGMT | - | - | - | - | - | - | - | - |
-
-#### NTP Device Configuration
-
-```eos
-!
-ntp local-interface vrf MGMT Management1
-ntp server vrf MGMT 0.pool.ntp.org
 ```
 
 ### Management API HTTP
@@ -246,25 +206,15 @@ vlan 3402
 
 | Interface | Description | Mode | VLANs | Native VLAN | Trunk Group | Channel-Group |
 | --------- | ----------- | ---- | ----- | ----------- | ----------- | ------------- |
-| Ethernet1 | DC1-LEAF1A_Ethernet8 | *trunk | *11-12,21-22,3401-3402 | *- | *- | 1 |
-| Ethernet2 | DC1-LEAF1B_Ethernet8 | *trunk | *11-12,21-22,3401-3402 | *- | *- | 1 |
 | Ethernet5 |  dc1-leaf1-server1_iLO | access | 11 | - | - | - |
+| Ethernet47 | DC1-LEAF1A_Ethernet43 | *trunk | *11-12,21-22,3401-3402 | *- | *- | 47 |
+| Ethernet48 | DC1-LEAF1B_Ethernet43 | *trunk | *11-12,21-22,3401-3402 | *- | *- | 47 |
 
 *Inherited from Port-Channel Interface
 
 #### Ethernet Interfaces Device Configuration
 
 ```eos
-!
-interface Ethernet1
-   description DC1-LEAF1A_Ethernet8
-   no shutdown
-   channel-group 1 mode active
-!
-interface Ethernet2
-   description DC1-LEAF1B_Ethernet8
-   no shutdown
-   channel-group 1 mode active
 !
 interface Ethernet5
    description dc1-leaf1-server1_iLO
@@ -273,6 +223,16 @@ interface Ethernet5
    switchport mode access
    switchport
    spanning-tree portfast
+!
+interface Ethernet47
+   description DC1-LEAF1A_Ethernet43
+   no shutdown
+   channel-group 47 mode active
+!
+interface Ethernet48
+   description DC1-LEAF1B_Ethernet43
+   no shutdown
+   channel-group 47 mode active
 ```
 
 ### Port-Channel Interfaces
@@ -283,14 +243,14 @@ interface Ethernet5
 
 | Interface | Description | Type | Mode | VLANs | Native VLAN | Trunk Group | LACP Fallback Timeout | LACP Fallback Mode | MLAG ID | EVPN ESI |
 | --------- | ----------- | ---- | ---- | ----- | ----------- | ------------| --------------------- | ------------------ | ------- | -------- |
-| Port-Channel1 | DC1_L3_LEAF1_Po8 | switched | trunk | 11-12,21-22,3401-3402 | - | - | - | - | - | - |
+| Port-Channel47 | DC1_L3_LEAF1_Po43 | switched | trunk | 11-12,21-22,3401-3402 | - | - | - | - | - | - |
 
 #### Port-Channel Interfaces Device Configuration
 
 ```eos
 !
-interface Port-Channel1
-   description DC1_L3_LEAF1_Po8
+interface Port-Channel47
+   description DC1_L3_LEAF1_Po43
    no shutdown
    switchport
    switchport trunk allowed vlan 11-12,21-22,3401-3402

@@ -1,4 +1,4 @@
-# dc1-leaf2c
+# dc2-leaf1c
 
 ## Table of Contents
 
@@ -42,7 +42,7 @@
 
 | Management Interface | description | Type | VRF | IP Address | Gateway |
 | -------------------- | ----------- | ---- | --- | ---------- | ------- |
-| Management1 | oob_management | oob | MGMT | 172.16.1.152/24 | 172.16.1.1 |
+| Management1 | oob_management | oob | MGMT | 172.16.2.151/24 | 172.16.1.1 |
 
 ##### IPv6
 
@@ -58,7 +58,7 @@ interface Management1
    description oob_management
    no shutdown
    vrf MGMT
-   ip address 172.16.1.152/24
+   ip address 172.16.2.151/24
 ```
 
 ### Management API HTTP
@@ -206,9 +206,8 @@ vlan 3402
 
 | Interface | Description | Mode | VLANs | Native VLAN | Trunk Group | Channel-Group |
 | --------- | ----------- | ---- | ----- | ----------- | ----------- | ------------- |
-| Ethernet5 |  dc1-leaf2-server1_iLO | access | 11 | - | - | - |
-| Ethernet47 | DC1-LEAF2A_Ethernet8 | *trunk | *11-12,21-22,3401-3402 | *- | *- | 47 |
-| Ethernet48 | DC1-LEAF2B_Ethernet8 | *trunk | *11-12,21-22,3401-3402 | *- | *- | 47 |
+| Ethernet47 | DC2-LEAF1A_Ethernet43 | *trunk | *11-12,21-22,3401-3402 | *- | *- | 47 |
+| Ethernet48 | DC2-LEAF1B_Ethernet43 | *trunk | *11-12,21-22,3401-3402 | *- | *- | 47 |
 
 *Inherited from Port-Channel Interface
 
@@ -216,21 +215,13 @@ vlan 3402
 
 ```eos
 !
-interface Ethernet5
-   description dc1-leaf2-server1_iLO
-   no shutdown
-   switchport access vlan 11
-   switchport mode access
-   switchport
-   spanning-tree portfast
-!
 interface Ethernet47
-   description DC1-LEAF2A_Ethernet8
+   description DC2-LEAF1A_Ethernet43
    no shutdown
    channel-group 47 mode active
 !
 interface Ethernet48
-   description DC1-LEAF2B_Ethernet8
+   description DC2-LEAF1B_Ethernet43
    no shutdown
    channel-group 47 mode active
 ```
@@ -243,14 +234,14 @@ interface Ethernet48
 
 | Interface | Description | Type | Mode | VLANs | Native VLAN | Trunk Group | LACP Fallback Timeout | LACP Fallback Mode | MLAG ID | EVPN ESI |
 | --------- | ----------- | ---- | ---- | ----- | ----------- | ------------| --------------------- | ------------------ | ------- | -------- |
-| Port-Channel47 | DC1_L3_LEAF2_Po8 | switched | trunk | 11-12,21-22,3401-3402 | - | - | - | - | - | - |
+| Port-Channel47 | DC2_L3_LEAF1_Po43 | switched | trunk | 11-12,21-22,3401-3402 | - | - | - | - | - | - |
 
 #### Port-Channel Interfaces Device Configuration
 
 ```eos
 !
 interface Port-Channel47
-   description DC1_L3_LEAF2_Po8
+   description DC2_L3_LEAF1_Po43
    no shutdown
    switchport
    switchport trunk allowed vlan 11-12,21-22,3401-3402

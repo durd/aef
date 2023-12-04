@@ -20,9 +20,6 @@ vlan_internal_order:
   range:
     beginning: 1006
     ending: 1199
-ip_name_servers:
-- ip_address: 192.168.1.1
-  vrf: MGMT
 spanning_tree:
   mode: mstp
   mst_instances:
@@ -53,25 +50,25 @@ management_api_http:
   - name: MGMT
   enable_https: true
 ethernet_interfaces:
-- name: Ethernet1
+- name: Ethernet47
   peer: dc1-leaf1a
-  peer_interface: Ethernet8
+  peer_interface: Ethernet43
   peer_type: l3leaf
-  description: DC1-LEAF1A_Ethernet8
+  description: DC1-LEAF1A_Ethernet43
   shutdown: false
   type: port-channel-member
   channel_group:
-    id: 1
+    id: 47
     mode: active
-- name: Ethernet2
+- name: Ethernet48
   peer: dc1-leaf1b
-  peer_interface: Ethernet8
+  peer_interface: Ethernet43
   peer_type: l3leaf
-  description: DC1-LEAF1B_Ethernet8
+  description: DC1-LEAF1B_Ethernet43
   shutdown: false
   type: port-channel-member
   channel_group:
-    id: 1
+    id: 47
     mode: active
 - name: Ethernet5
   peer: dc1-leaf1-server1
@@ -84,8 +81,8 @@ ethernet_interfaces:
   vlans: '11'
   spanning_tree_portfast: edge
 port_channel_interfaces:
-- name: Port-Channel1
-  description: DC1_L3_LEAF1_Po8
+- name: Port-Channel47
+  description: DC1_L3_LEAF1_Po43
   type: switched
   shutdown: false
   mode: trunk
@@ -111,10 +108,3 @@ vlans:
   tenant: TENANT1
 ip_igmp_snooping:
   globally_enabled: true
-ntp:
-  local_interface:
-    name: Management1
-    vrf: MGMT
-  servers:
-  - name: 0.pool.ntp.org
-    vrf: MGMT

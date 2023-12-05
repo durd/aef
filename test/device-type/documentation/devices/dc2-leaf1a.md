@@ -41,6 +41,7 @@
   - [IP IGMP Snooping](#ip-igmp-snooping)
 - [Filters](#filters)
   - [Route-maps](#route-maps)
+  - [IP Extended Community Lists](#ip-extended-community-lists)
 - [VRF Instances](#vrf-instances)
   - [VRF Instances Summary](#vrf-instances-summary)
   - [VRF Instances Device Configuration](#vrf-instances-device-configuration)
@@ -654,9 +655,9 @@ router ospf 100
 | Settings | Value |
 | -------- | ----- |
 | Address Family | evpn |
+| Remote AS | 65101 |
 | Source | Loopback0 |
 | BFD | True |
-| Ebgp multihop | 3 |
 | Send community | all |
 | Maximum routes | 0 (no limit) |
 
@@ -713,9 +714,9 @@ router bgp 65101
    update wait-install
    no bgp default ipv4-unicast
    neighbor EVPN-OVERLAY-PEERS peer group
+   neighbor EVPN-OVERLAY-PEERS remote-as 65101
    neighbor EVPN-OVERLAY-PEERS update-source Loopback0
    neighbor EVPN-OVERLAY-PEERS bfd
-   neighbor EVPN-OVERLAY-PEERS ebgp-multihop 3
    neighbor EVPN-OVERLAY-PEERS send-community
    neighbor EVPN-OVERLAY-PEERS maximum-routes 0
    neighbor MLAG-IPv4-UNDERLAY-PEER peer group
@@ -757,6 +758,8 @@ router bgp 65101
       redistribute learned
    !
    address-family evpn
+      neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-IN in
+      neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-OUT out
       neighbor EVPN-OVERLAY-PEERS activate
    !
    address-family ipv4
@@ -821,6 +824,19 @@ router bfd
 
 #### Route-maps Summary
 
+##### RM-EVPN-SOO-IN
+
+| Sequence | Type | Match | Set | Sub-Route-Map | Continue |
+| -------- | ---- | ----- | --- | ------------- | -------- |
+| 10 | deny | extcommunity ECL-EVPN-SOO | - | - | - |
+| 20 | permit | - | - | - | - |
+
+##### RM-EVPN-SOO-OUT
+
+| Sequence | Type | Match | Set | Sub-Route-Map | Continue |
+| -------- | ---- | ----- | --- | ------------- | -------- |
+| 10 | permit | - | extcommunity soo 10.255.21.21:1 additive | - | - |
+
 ##### RM-MLAG-PEER-IN
 
 | Sequence | Type | Match | Set | Sub-Route-Map | Continue |
@@ -831,9 +847,32 @@ router bfd
 
 ```eos
 !
+route-map RM-EVPN-SOO-IN deny 10
+   match extcommunity ECL-EVPN-SOO
+!
+route-map RM-EVPN-SOO-IN permit 20
+!
+route-map RM-EVPN-SOO-OUT permit 10
+   set extcommunity soo 10.255.21.21:1 additive
+!
 route-map RM-MLAG-PEER-IN permit 10
    description Make routes learned over MLAG Peer-link less preferred on spines to ensure optimal routing
    set origin incomplete
+```
+
+### IP Extended Community Lists
+
+#### IP Extended Community Lists Summary
+
+| List Name | Type | Extended Communities |
+| --------- | ---- | -------------------- |
+| ECL-EVPN-SOO | permit | soo 10.255.21.21:1 |
+
+#### IP Extended Community Lists configuration
+
+```eos
+!
+ip extcommunity-list ECL-EVPN-SOO permit soo 10.255.21.21:1
 ```
 
 ## VRF Instances

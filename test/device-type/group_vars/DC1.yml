@@ -31,13 +31,13 @@ mgmt_gateway: 172.16.1.1
 l3leaf:
   defaults:
   #   # Set the relevant platform as each platform has different default values in Ansible AVD
-    platform: 7280SR3
+    platform: sand
   #   # Pool of IPv4 addresses to configure interface Loopback0 used for BGP EVPN sessions
     loopback_ipv4_pool: 10.255.1.0/27
   #   # Offset all assigned loopback IP addresses.
   #   # Required when the < loopback_ipv4_pool > is same for 2 different node_types (like spine and l3leaf) to avoid over-lapping IPs.
   #   # For example, set the minimum offset l3leaf.defaults.loopback_ipv4_offset: < total # spine switches > or vice versa.
-  #   loopback_ipv4_offset: 2
+    loopback_ipv4_offset: 2
   #   # Definition of pool of IPs to be used as Virtual Tunnel EndPoint (VXLAN origin and destination IPs)
     vtep_loopback_ipv4_pool: 10.255.11.0/24
   #   # Ansible hostname of the devices used to establish neighborship (IP assignments and BGP peering)
@@ -59,7 +59,7 @@ l3leaf:
     # Definitions under the group will be inherited by both nodes in the group
     - group: DC1_L3_LEAF1
       # ASN to be used by BGP for the group. Both devices in the MLAG pair will use the same BGP ASN
-      bgp_as: 65101
+      # bgp_as: 65101
       nodes:
         # Definition of hostnames under the node_group
         - name: dc1-leaf1a

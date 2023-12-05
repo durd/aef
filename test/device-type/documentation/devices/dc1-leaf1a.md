@@ -386,8 +386,8 @@ interface Port-Channel47
 
 | Interface | Description | VRF | IP Address |
 | --------- | ----------- | --- | ---------- |
-| Loopback0 | EVPN_Overlay_Peering | default | 10.255.1.11/32 |
-| Loopback1 | VTEP_VXLAN_Tunnel_Source | default | 10.255.11.11/32 |
+| Loopback0 | EVPN_Overlay_Peering | default | 10.255.1.13/32 |
+| Loopback1 | VTEP_VXLAN_Tunnel_Source | default | 10.255.11.13/32 |
 
 ##### IPv6
 
@@ -404,13 +404,13 @@ interface Port-Channel47
 interface Loopback0
    description EVPN_Overlay_Peering
    no shutdown
-   ip address 10.255.1.11/32
+   ip address 10.255.1.13/32
    ip ospf area 0.0.0.0
 !
 interface Loopback1
    description VTEP_VXLAN_Tunnel_Source
    no shutdown
-   ip address 10.255.11.11/32
+   ip address 10.255.11.13/32
    ip ospf area 0.0.0.0
 ```
 
@@ -624,7 +624,7 @@ ip route vrf MGMT 0.0.0.0/0 172.16.1.1
 
 | Process ID | Router ID | Default Passive Interface | No Passive Interface | BFD | Max LSA | Default Information Originate | Log Adjacency Changes Detail | Auto Cost Reference Bandwidth | Maximum Paths | MPLS LDP Sync Default | Distribute List In |
 | ---------- | --------- | ------------------------- | -------------------- | --- | ------- | ----------------------------- | ---------------------------- | ----------------------------- | ------------- | --------------------- | ------------------ |
-| 100 | 10.255.1.11 | enabled | Ethernet44 <br> Ethernet45 <br> Ethernet46 <br> Vlan4093 <br> | disabled | 12000 | disabled | disabled | - | - | - | - |
+| 100 | 10.255.1.13 | enabled | Ethernet44 <br> Ethernet45 <br> Ethernet46 <br> Vlan4093 <br> | disabled | 12000 | disabled | disabled | - | - | - | - |
 
 #### OSPF Interfaces
 
@@ -642,7 +642,7 @@ ip route vrf MGMT 0.0.0.0/0 172.16.1.1
 ```eos
 !
 router ospf 100
-   router-id 10.255.1.11
+   router-id 10.255.1.13
    passive-interface default
    no passive-interface Ethernet44
    no passive-interface Ethernet45
@@ -657,7 +657,7 @@ router ospf 100
 
 | BGP AS | Router ID |
 | ------ | --------- |
-| 65101 | 10.255.1.11 |
+| 65101 | 10.255.1.13 |
 
 | BGP Tuning |
 | ---------- |
@@ -707,26 +707,26 @@ router ospf 100
 
 | VLAN | Route-Distinguisher | Both Route-Target | Import Route Target | Export Route-Target | Redistribute |
 | ---- | ------------------- | ----------------- | ------------------- | ------------------- | ------------ |
-| 11 | 10.255.1.11:10011 | 10011:10011 | - | - | learned |
-| 12 | 10.255.1.11:10012 | 10012:10012 | - | - | learned |
-| 21 | 10.255.1.11:10021 | 10021:10021 | - | - | learned |
-| 22 | 10.255.1.11:10022 | 10022:10022 | - | - | learned |
-| 3401 | 10.255.1.11:13401 | 13401:13401 | - | - | learned |
-| 3402 | 10.255.1.11:13402 | 13402:13402 | - | - | learned |
+| 11 | 10.255.1.13:10011 | 10011:10011 | - | - | learned |
+| 12 | 10.255.1.13:10012 | 10012:10012 | - | - | learned |
+| 21 | 10.255.1.13:10021 | 10021:10021 | - | - | learned |
+| 22 | 10.255.1.13:10022 | 10022:10022 | - | - | learned |
+| 3401 | 10.255.1.13:13401 | 13401:13401 | - | - | learned |
+| 3402 | 10.255.1.13:13402 | 13402:13402 | - | - | learned |
 
 #### Router BGP VRFs
 
 | VRF | Route-Distinguisher | Redistribute |
 | --- | ------------------- | ------------ |
-| VRF10 | 10.255.1.11:10 | connected |
-| VRF11 | 10.255.1.11:11 | connected |
+| VRF10 | 10.255.1.13:10 | connected |
+| VRF11 | 10.255.1.13:11 | connected |
 
 #### Router BGP Device Configuration
 
 ```eos
 !
 router bgp 65101
-   router-id 10.255.1.11
+   router-id 10.255.1.13
    maximum-paths 4 ecmp 4
    update wait-install
    no bgp default ipv4-unicast
@@ -734,43 +734,45 @@ router bgp 65101
    neighbor EVPN-OVERLAY-PEERS remote-as 65101
    neighbor EVPN-OVERLAY-PEERS update-source Loopback0
    neighbor EVPN-OVERLAY-PEERS bfd
+   neighbor EVPN-OVERLAY-PEERS password 7 <removed>
    neighbor EVPN-OVERLAY-PEERS send-community
    neighbor EVPN-OVERLAY-PEERS maximum-routes 0
    neighbor MLAG-IPv4-UNDERLAY-PEER peer group
    neighbor MLAG-IPv4-UNDERLAY-PEER remote-as 65101
    neighbor MLAG-IPv4-UNDERLAY-PEER next-hop-self
    neighbor MLAG-IPv4-UNDERLAY-PEER description dc1-leaf1b
+   neighbor MLAG-IPv4-UNDERLAY-PEER password 7 <removed>
    neighbor MLAG-IPv4-UNDERLAY-PEER send-community
    neighbor MLAG-IPv4-UNDERLAY-PEER maximum-routes 12000
    neighbor MLAG-IPv4-UNDERLAY-PEER route-map RM-MLAG-PEER-IN in
    !
    vlan 11
-      rd 10.255.1.11:10011
+      rd 10.255.1.13:10011
       route-target both 10011:10011
       redistribute learned
    !
    vlan 12
-      rd 10.255.1.11:10012
+      rd 10.255.1.13:10012
       route-target both 10012:10012
       redistribute learned
    !
    vlan 21
-      rd 10.255.1.11:10021
+      rd 10.255.1.13:10021
       route-target both 10021:10021
       redistribute learned
    !
    vlan 22
-      rd 10.255.1.11:10022
+      rd 10.255.1.13:10022
       route-target both 10022:10022
       redistribute learned
    !
    vlan 3401
-      rd 10.255.1.11:13401
+      rd 10.255.1.13:13401
       route-target both 13401:13401
       redistribute learned
    !
    vlan 3402
-      rd 10.255.1.11:13402
+      rd 10.255.1.13:13402
       route-target both 13402:13402
       redistribute learned
    !
@@ -784,19 +786,19 @@ router bgp 65101
       neighbor MLAG-IPv4-UNDERLAY-PEER activate
    !
    vrf VRF10
-      rd 10.255.1.11:10
+      rd 10.255.1.13:10
       route-target import evpn 10:10
       route-target export evpn 10:10
-      router-id 10.255.1.11
+      router-id 10.255.1.13
       update wait-install
       neighbor 10.255.14.21 peer group MLAG-IPv4-UNDERLAY-PEER
       redistribute connected
    !
    vrf VRF11
-      rd 10.255.1.11:11
+      rd 10.255.1.13:11
       route-target import evpn 11:11
       route-target export evpn 11:11
-      router-id 10.255.1.11
+      router-id 10.255.1.13
       update wait-install
       neighbor 10.255.14.21 peer group MLAG-IPv4-UNDERLAY-PEER
       redistribute connected
@@ -852,7 +854,7 @@ router bfd
 
 | Sequence | Type | Match | Set | Sub-Route-Map | Continue |
 | -------- | ---- | ----- | --- | ------------- | -------- |
-| 10 | permit | - | extcommunity soo 10.255.11.11:1 additive | - | - |
+| 10 | permit | - | extcommunity soo 10.255.11.13:1 additive | - | - |
 
 ##### RM-MLAG-PEER-IN
 
@@ -870,7 +872,7 @@ route-map RM-EVPN-SOO-IN deny 10
 route-map RM-EVPN-SOO-IN permit 20
 !
 route-map RM-EVPN-SOO-OUT permit 10
-   set extcommunity soo 10.255.11.11:1 additive
+   set extcommunity soo 10.255.11.13:1 additive
 !
 route-map RM-MLAG-PEER-IN permit 10
    description Make routes learned over MLAG Peer-link less preferred on spines to ensure optimal routing
@@ -883,13 +885,13 @@ route-map RM-MLAG-PEER-IN permit 10
 
 | List Name | Type | Extended Communities |
 | --------- | ---- | -------------------- |
-| ECL-EVPN-SOO | permit | soo 10.255.11.11:1 |
+| ECL-EVPN-SOO | permit | soo 10.255.11.13:1 |
 
 #### IP Extended Community Lists configuration
 
 ```eos
 !
-ip extcommunity-list ECL-EVPN-SOO permit soo 10.255.11.11:1
+ip extcommunity-list ECL-EVPN-SOO permit soo 10.255.11.13:1
 ```
 
 ## VRF Instances

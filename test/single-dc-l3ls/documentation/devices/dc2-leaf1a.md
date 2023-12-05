@@ -41,7 +41,6 @@
   - [IP IGMP Snooping](#ip-igmp-snooping)
 - [Filters](#filters)
   - [Route-maps](#route-maps)
-  - [IP Extended Community Lists](#ip-extended-community-lists)
 - [VRF Instances](#vrf-instances)
   - [VRF Instances Summary](#vrf-instances-summary)
   - [VRF Instances Device Configuration](#vrf-instances-device-configuration)
@@ -369,8 +368,8 @@ interface Port-Channel47
 
 | Interface | Description | VRF | IP Address |
 | --------- | ----------- | --- | ---------- |
-| Loopback0 | EVPN_Overlay_Peering | default | 10.255.2.23/32 |
-| Loopback1 | VTEP_VXLAN_Tunnel_Source | default | 10.255.21.23/32 |
+| Loopback0 | EVPN_Overlay_Peering | default | 10.255.2.21/32 |
+| Loopback1 | VTEP_VXLAN_Tunnel_Source | default | 10.255.21.21/32 |
 
 ##### IPv6
 
@@ -387,13 +386,13 @@ interface Port-Channel47
 interface Loopback0
    description EVPN_Overlay_Peering
    no shutdown
-   ip address 10.255.2.23/32
+   ip address 10.255.2.21/32
    ip ospf area 0.0.0.0
 !
 interface Loopback1
    description VTEP_VXLAN_Tunnel_Source
    no shutdown
-   ip address 10.255.21.23/32
+   ip address 10.255.21.21/32
    ip ospf area 0.0.0.0
 ```
 
@@ -607,7 +606,7 @@ ip route vrf MGMT 0.0.0.0/0 172.16.1.1
 
 | Process ID | Router ID | Default Passive Interface | No Passive Interface | BFD | Max LSA | Default Information Originate | Log Adjacency Changes Detail | Auto Cost Reference Bandwidth | Maximum Paths | MPLS LDP Sync Default | Distribute List In |
 | ---------- | --------- | ------------------------- | -------------------- | --- | ------- | ----------------------------- | ---------------------------- | ----------------------------- | ------------- | --------------------- | ------------------ |
-| 100 | 10.255.2.23 | enabled | Ethernet44 <br> Ethernet45 <br> Ethernet46 <br> Vlan4093 <br> | disabled | 12000 | disabled | disabled | - | - | - | - |
+| 100 | 10.255.2.21 | enabled | Ethernet44 <br> Ethernet45 <br> Ethernet46 <br> Vlan4093 <br> | disabled | 12000 | disabled | disabled | - | - | - | - |
 
 #### OSPF Interfaces
 
@@ -625,7 +624,7 @@ ip route vrf MGMT 0.0.0.0/0 172.16.1.1
 ```eos
 !
 router ospf 100
-   router-id 10.255.2.23
+   router-id 10.255.2.21
    passive-interface default
    no passive-interface Ethernet44
    no passive-interface Ethernet45
@@ -640,7 +639,7 @@ router ospf 100
 
 | BGP AS | Router ID |
 | ------ | --------- |
-| 65101 | 10.255.2.23 |
+| 65101 | 10.255.2.21 |
 
 | BGP Tuning |
 | ---------- |
@@ -655,9 +654,9 @@ router ospf 100
 | Settings | Value |
 | -------- | ----- |
 | Address Family | evpn |
-| Remote AS | 65101 |
 | Source | Loopback0 |
 | BFD | True |
+| Ebgp multihop | 3 |
 | Send community | all |
 | Maximum routes | 0 (no limit) |
 
@@ -690,78 +689,74 @@ router ospf 100
 
 | VLAN | Route-Distinguisher | Both Route-Target | Import Route Target | Export Route-Target | Redistribute |
 | ---- | ------------------- | ----------------- | ------------------- | ------------------- | ------------ |
-| 11 | 10.255.2.23:10011 | 10011:10011 | - | - | learned |
-| 12 | 10.255.2.23:10012 | 10012:10012 | - | - | learned |
-| 21 | 10.255.2.23:10021 | 10021:10021 | - | - | learned |
-| 22 | 10.255.2.23:10022 | 10022:10022 | - | - | learned |
-| 3401 | 10.255.2.23:13401 | 13401:13401 | - | - | learned |
-| 3402 | 10.255.2.23:13402 | 13402:13402 | - | - | learned |
+| 11 | 10.255.2.21:10011 | 10011:10011 | - | - | learned |
+| 12 | 10.255.2.21:10012 | 10012:10012 | - | - | learned |
+| 21 | 10.255.2.21:10021 | 10021:10021 | - | - | learned |
+| 22 | 10.255.2.21:10022 | 10022:10022 | - | - | learned |
+| 3401 | 10.255.2.21:13401 | 13401:13401 | - | - | learned |
+| 3402 | 10.255.2.21:13402 | 13402:13402 | - | - | learned |
 
 #### Router BGP VRFs
 
 | VRF | Route-Distinguisher | Redistribute |
 | --- | ------------------- | ------------ |
-| VRF10 | 10.255.2.23:10 | connected |
-| VRF11 | 10.255.2.23:11 | connected |
+| VRF10 | 10.255.2.21:10 | connected |
+| VRF11 | 10.255.2.21:11 | connected |
 
 #### Router BGP Device Configuration
 
 ```eos
 !
 router bgp 65101
-   router-id 10.255.2.23
+   router-id 10.255.2.21
    maximum-paths 4 ecmp 4
    update wait-install
    no bgp default ipv4-unicast
    neighbor EVPN-OVERLAY-PEERS peer group
-   neighbor EVPN-OVERLAY-PEERS remote-as 65101
    neighbor EVPN-OVERLAY-PEERS update-source Loopback0
    neighbor EVPN-OVERLAY-PEERS bfd
-   neighbor EVPN-OVERLAY-PEERS password 7 <removed>
+   neighbor EVPN-OVERLAY-PEERS ebgp-multihop 3
    neighbor EVPN-OVERLAY-PEERS send-community
    neighbor EVPN-OVERLAY-PEERS maximum-routes 0
    neighbor MLAG-IPv4-UNDERLAY-PEER peer group
    neighbor MLAG-IPv4-UNDERLAY-PEER remote-as 65101
    neighbor MLAG-IPv4-UNDERLAY-PEER next-hop-self
    neighbor MLAG-IPv4-UNDERLAY-PEER description dc2-leaf1b
-   neighbor MLAG-IPv4-UNDERLAY-PEER password 7 <removed>
    neighbor MLAG-IPv4-UNDERLAY-PEER send-community
    neighbor MLAG-IPv4-UNDERLAY-PEER maximum-routes 12000
    neighbor MLAG-IPv4-UNDERLAY-PEER route-map RM-MLAG-PEER-IN in
    !
    vlan 11
-      rd 10.255.2.23:10011
+      rd 10.255.2.21:10011
       route-target both 10011:10011
       redistribute learned
    !
    vlan 12
-      rd 10.255.2.23:10012
+      rd 10.255.2.21:10012
       route-target both 10012:10012
       redistribute learned
    !
    vlan 21
-      rd 10.255.2.23:10021
+      rd 10.255.2.21:10021
       route-target both 10021:10021
       redistribute learned
    !
    vlan 22
-      rd 10.255.2.23:10022
+      rd 10.255.2.21:10022
       route-target both 10022:10022
       redistribute learned
    !
    vlan 3401
-      rd 10.255.2.23:13401
+      rd 10.255.2.21:13401
       route-target both 13401:13401
       redistribute learned
    !
    vlan 3402
-      rd 10.255.2.23:13402
+      rd 10.255.2.21:13402
       route-target both 13402:13402
       redistribute learned
    !
    address-family evpn
-      neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-IN in
-      neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-OUT out
       neighbor EVPN-OVERLAY-PEERS activate
    !
    address-family ipv4
@@ -769,19 +764,19 @@ router bgp 65101
       neighbor MLAG-IPv4-UNDERLAY-PEER activate
    !
    vrf VRF10
-      rd 10.255.2.23:10
+      rd 10.255.2.21:10
       route-target import evpn 10:10
       route-target export evpn 10:10
-      router-id 10.255.2.23
+      router-id 10.255.2.21
       update wait-install
       neighbor 10.255.24.41 peer group MLAG-IPv4-UNDERLAY-PEER
       redistribute connected
    !
    vrf VRF11
-      rd 10.255.2.23:11
+      rd 10.255.2.21:11
       route-target import evpn 11:11
       route-target export evpn 11:11
-      router-id 10.255.2.23
+      router-id 10.255.2.21
       update wait-install
       neighbor 10.255.24.41 peer group MLAG-IPv4-UNDERLAY-PEER
       redistribute connected
@@ -826,19 +821,6 @@ router bfd
 
 #### Route-maps Summary
 
-##### RM-EVPN-SOO-IN
-
-| Sequence | Type | Match | Set | Sub-Route-Map | Continue |
-| -------- | ---- | ----- | --- | ------------- | -------- |
-| 10 | deny | extcommunity ECL-EVPN-SOO | - | - | - |
-| 20 | permit | - | - | - | - |
-
-##### RM-EVPN-SOO-OUT
-
-| Sequence | Type | Match | Set | Sub-Route-Map | Continue |
-| -------- | ---- | ----- | --- | ------------- | -------- |
-| 10 | permit | - | extcommunity soo 10.255.21.23:1 additive | - | - |
-
 ##### RM-MLAG-PEER-IN
 
 | Sequence | Type | Match | Set | Sub-Route-Map | Continue |
@@ -849,32 +831,9 @@ router bfd
 
 ```eos
 !
-route-map RM-EVPN-SOO-IN deny 10
-   match extcommunity ECL-EVPN-SOO
-!
-route-map RM-EVPN-SOO-IN permit 20
-!
-route-map RM-EVPN-SOO-OUT permit 10
-   set extcommunity soo 10.255.21.23:1 additive
-!
 route-map RM-MLAG-PEER-IN permit 10
    description Make routes learned over MLAG Peer-link less preferred on spines to ensure optimal routing
    set origin incomplete
-```
-
-### IP Extended Community Lists
-
-#### IP Extended Community Lists Summary
-
-| List Name | Type | Extended Communities |
-| --------- | ---- | -------------------- |
-| ECL-EVPN-SOO | permit | soo 10.255.21.23:1 |
-
-#### IP Extended Community Lists configuration
-
-```eos
-!
-ip extcommunity-list ECL-EVPN-SOO permit soo 10.255.21.23:1
 ```
 
 ## VRF Instances

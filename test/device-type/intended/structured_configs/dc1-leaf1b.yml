@@ -2,7 +2,7 @@ hostname: dc1-leaf1b
 is_deployed: true
 router_bgp:
   as: '65101'
-  router_id: 10.255.1.12
+  router_id: 10.255.1.14
   bgp:
     default:
       ipv4_unicast: false
@@ -16,6 +16,7 @@ router_bgp:
     type: evpn
     update_source: Loopback0
     bfd: true
+    password: Q4fqtbqcZ7oQuKfuWtNGRQ==
     send_community: all
     maximum_routes: 0
     remote_as: '65101'
@@ -24,6 +25,7 @@ router_bgp:
     remote_as: '65101'
     next_hop_self: true
     description: dc1-leaf1a
+    password: 4b21pAdCvWeAqpcKDFMdWw==
     maximum_routes: 12000
     send_community: all
     route_map_in: RM-MLAG-PEER-IN
@@ -41,8 +43,8 @@ router_bgp:
       activate: true
   vrfs:
   - name: VRF10
-    router_id: 10.255.1.12
-    rd: 10.255.1.12:10
+    router_id: 10.255.1.14
+    rd: 10.255.1.14:10
     route_targets:
       import:
       - address_family: evpn
@@ -60,8 +62,8 @@ router_bgp:
     updates:
       wait_install: true
   - name: VRF11
-    router_id: 10.255.1.12
-    rd: 10.255.1.12:11
+    router_id: 10.255.1.14
+    rd: 10.255.1.14:11
     route_targets:
       import:
       - address_family: evpn
@@ -81,7 +83,7 @@ router_bgp:
   vlans:
   - id: 11
     tenant: TENANT1
-    rd: 10.255.1.12:10011
+    rd: 10.255.1.14:10011
     route_targets:
       both:
       - 10011:10011
@@ -89,7 +91,7 @@ router_bgp:
     - learned
   - id: 12
     tenant: TENANT1
-    rd: 10.255.1.12:10012
+    rd: 10.255.1.14:10012
     route_targets:
       both:
       - 10012:10012
@@ -97,7 +99,7 @@ router_bgp:
     - learned
   - id: 21
     tenant: TENANT1
-    rd: 10.255.1.12:10021
+    rd: 10.255.1.14:10021
     route_targets:
       both:
       - 10021:10021
@@ -105,7 +107,7 @@ router_bgp:
     - learned
   - id: 22
     tenant: TENANT1
-    rd: 10.255.1.12:10022
+    rd: 10.255.1.14:10022
     route_targets:
       both:
       - 10022:10022
@@ -113,7 +115,7 @@ router_bgp:
     - learned
   - id: 3401
     tenant: TENANT1
-    rd: 10.255.1.12:13401
+    rd: 10.255.1.14:13401
     route_targets:
       both:
       - 13401:13401
@@ -121,7 +123,7 @@ router_bgp:
     - learned
   - id: 3402
     tenant: TENANT1
-    rd: 10.255.1.12:13402
+    rd: 10.255.1.14:13402
     route_targets:
       both:
       - 13402:13402
@@ -387,18 +389,18 @@ loopback_interfaces:
 - name: Loopback0
   description: EVPN_Overlay_Peering
   shutdown: false
-  ip_address: 10.255.1.12/32
+  ip_address: 10.255.1.14/32
   ospf_area: 0.0.0.0
 - name: Loopback1
   description: VTEP_VXLAN_Tunnel_Source
   shutdown: false
-  ip_address: 10.255.11.11/32
+  ip_address: 10.255.11.13/32
   ospf_area: 0.0.0.0
 router_ospf:
   process_ids:
   - id: 100
     passive_interface_default: true
-    router_id: 10.255.1.12
+    router_id: 10.255.1.14
     max_lsa: 12000
     no_passive_interfaces:
     - Ethernet44
@@ -410,7 +412,7 @@ ip_extcommunity_lists:
 - name: ECL-EVPN-SOO
   entries:
   - type: permit
-    extcommunities: soo 10.255.11.11:1
+    extcommunities: soo 10.255.11.13:1
 router_bfd:
   multihop:
     interval: 300
@@ -430,7 +432,7 @@ route_maps:
   - sequence: 10
     type: permit
     set:
-    - extcommunity soo 10.255.11.11:1 additive
+    - extcommunity soo 10.255.11.13:1 additive
 - name: RM-MLAG-PEER-IN
   sequence_numbers:
   - sequence: 10

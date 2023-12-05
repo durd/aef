@@ -17,11 +17,11 @@
 
 | POD | Type | Node | Management IP | Platform | Provisioned in CloudVision | Serial Number |
 | --- | ---- | ---- | ------------- | -------- | -------------------------- | ------------- |
-| FABRIC | l3leaf | dc1-leaf1a | 172.16.1.101/24 | 7280SR3 | Provisioned | - |
-| FABRIC | l3leaf | dc1-leaf1b | 172.16.1.102/24 | 7280SR3 | Provisioned | - |
+| FABRIC | l3leaf | dc1-leaf1a | 172.16.1.101/24 | sand | Provisioned | - |
+| FABRIC | l3leaf | dc1-leaf1b | 172.16.1.102/24 | sand | Provisioned | - |
 | FABRIC | l2leaf | dc1-leaf1c | 172.16.1.151/24 | vEOS-lab | Provisioned | - |
-| FABRIC | l3leaf | dc2-leaf1a | 172.16.2.101/24 | 7280SR3 | Provisioned | - |
-| FABRIC | l3leaf | dc2-leaf1b | 172.16.2.102/24 | 7280SR3 | Provisioned | - |
+| FABRIC | l3leaf | dc2-leaf1a | 172.16.2.101/24 | sand | Provisioned | - |
+| FABRIC | l3leaf | dc2-leaf1b | 172.16.2.102/24 | sand | Provisioned | - |
 | FABRIC | l2leaf | dc2-leaf1c | 172.16.2.151/24 | vEOS-lab | Provisioned | - |
 
 > Provision status is based on Ansible inventory declaration and do not represent real status from CloudVision.
@@ -81,10 +81,10 @@
 
 | POD | Node | Loopback0 |
 | --- | ---- | --------- |
-| FABRIC | dc1-leaf1a | 10.255.1.11/32 |
-| FABRIC | dc1-leaf1b | 10.255.1.12/32 |
-| FABRIC | dc2-leaf1a | 10.255.2.21/32 |
-| FABRIC | dc2-leaf1b | 10.255.2.22/32 |
+| FABRIC | dc1-leaf1a | 10.255.1.13/32 |
+| FABRIC | dc1-leaf1b | 10.255.1.14/32 |
+| FABRIC | dc2-leaf1a | 10.255.2.23/32 |
+| FABRIC | dc2-leaf1b | 10.255.2.24/32 |
 
 ### VTEP Loopback VXLAN Tunnel Source Interfaces (VTEPs Only)
 
@@ -97,7 +97,7 @@
 
 | POD | Node | Loopback1 |
 | --- | ---- | --------- |
-| FABRIC | dc1-leaf1a | 10.255.11.11/32 |
-| FABRIC | dc1-leaf1b | 10.255.11.11/32 |
-| FABRIC | dc2-leaf1a | 10.255.21.21/32 |
-| FABRIC | dc2-leaf1b | 10.255.21.21/32 |
+| FABRIC | dc1-leaf1a | 10.255.11.13/32 |
+| FABRIC | dc1-leaf1b | 10.255.11.13/32 |
+| FABRIC | dc2-leaf1a | 10.255.21.23/32 |
+| FABRIC | dc2-leaf1b | 10.255.21.23/32 |
